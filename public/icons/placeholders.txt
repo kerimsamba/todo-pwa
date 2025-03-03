@@ -1,0 +1,10 @@
+You'll need to add the following icon files here:
+
+- icon-192x192.png (192×192px)
+- icon-384x384.png (384×384px)
+- icon-512x512.png (512×512px)
+- apple-icon-180.png (180×180px)
+
+These can be generated using tools like:
+- https://realfavicongenerator.net/
+- https://maskable.app/
