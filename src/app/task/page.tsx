@@ -2,12 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-
-interface Task {
-  id: string;
-  text: string;
-  dueDate: string | null;
-}
+import { Task } from '@/types/task';
+import { getRandomTask, deleteTask, deferTask } from '@/lib/tasks';
 
 export default function Task() {
   const [task, setTask] = useState<Task | null>(null);
@@ -15,37 +11,17 @@ export default function Task() {
   const router = useRouter();
 
   useEffect(() => {
-    // Load tasks from localStorage
-    const storedTasks = localStorage.getItem('tasks');
-    if (storedTasks) {
-      try {
-        const tasks: Task[] = JSON.parse(storedTasks);
-        if (tasks.length > 0) {
-          // Pick a random task
-          const randomIndex = Math.floor(Math.random() * tasks.length);
-          setTask(tasks[randomIndex]);
-        }
-      } catch (e) {
-        console.error('Error parsing stored tasks:', e);
-      }
-    }
+    // Get a random task
+    const randomTask = getRandomTask();
+    setTask(randomTask);
     setLoading(false);
   }, []);
 
   const handleComplete = () => {
     if (!task) return;
     
-    // Remove the completed task
-    const storedTasks = localStorage.getItem('tasks');
-    if (storedTasks) {
-      try {
-        const tasks: Task[] = JSON.parse(storedTasks);
-        const updatedTasks = tasks.filter(t => t.id !== task.id);
-        localStorage.setItem('tasks', JSON.stringify(updatedTasks));
-      } catch (e) {
-        console.error('Error updating tasks:', e);
-      }
-    }
+    // Delete the completed task (could also mark as completed in a future version)
+    deleteTask(task.id);
     
     // Go back to home
     router.push('/');
@@ -54,24 +30,8 @@ export default function Task() {
   const handleDefer = (days: number) => {
     if (!task) return;
     
-    // Update the task's due date
-    const storedTasks = localStorage.getItem('tasks');
-    if (storedTasks) {
-      try {
-        const tasks: Task[] = JSON.parse(storedTasks);
-        const updatedTasks = tasks.map(t => {
-          if (t.id === task.id) {
-            const newDueDate = new Date();
-            newDueDate.setDate(newDueDate.getDate() + days);
-            return { ...t, dueDate: newDueDate.toISOString() };
-          }
-          return t;
-        });
-        localStorage.setItem('tasks', JSON.stringify(updatedTasks));
-      } catch (e) {
-        console.error('Error updating tasks:', e);
-      }
-    }
+    // Defer the task
+    deferTask(task.id, days);
     
     // Go back to home
     router.push('/');
@@ -80,17 +40,8 @@ export default function Task() {
   const handleDelete = () => {
     if (!task) return;
     
-    // Remove the task
-    const storedTasks = localStorage.getItem('tasks');
-    if (storedTasks) {
-      try {
-        const tasks: Task[] = JSON.parse(storedTasks);
-        const updatedTasks = tasks.filter(t => t.id !== task.id);
-        localStorage.setItem('tasks', JSON.stringify(updatedTasks));
-      } catch (e) {
-        console.error('Error updating tasks:', e);
-      }
-    }
+    // Delete the task
+    deleteTask(task.id);
     
     // Go back to home
     router.push('/');
