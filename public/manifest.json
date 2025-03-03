@@ -1,11 +1,11 @@
 {
-  "name": "Todo PWA",
-  "short_name": "TodoApp",
-  "description": "A Todo List Progressive Web App built with Next.js",
+  "name": "Do It! Task Manager",
+  "short_name": "Do It!",
+  "description": "A minimalist task manager that helps you focus on one task at a time",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#4f46e5",
+  "background_color": "#131925",
+  "theme_color": "#131925",
   "orientation": "portrait",
   "icons": [
     {
