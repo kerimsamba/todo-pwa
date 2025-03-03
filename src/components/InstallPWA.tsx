@@ -44,14 +44,14 @@ export default function InstallPWA() {
   }
 
   return (
-    <div className="fixed bottom-4 left-0 right-0 mx-auto w-full max-w-md p-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+    <div className="fixed bottom-20 left-0 right-0 mx-auto w-full max-w-md p-4 bg-gray-800 rounded-lg shadow-lg border border-gray-700">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-medium text-gray-900 dark:text-white">Install App</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Install this app on your device for quick and easy access.</p>
+          <h3 className="text-lg font-medium text-white">Install App</h3>
+          <p className="text-sm text-gray-400">Install this app for quick access when offline.</p>
         </div>
         <button
-          className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none"
           onClick={handleInstallClick}
         >
           Install
