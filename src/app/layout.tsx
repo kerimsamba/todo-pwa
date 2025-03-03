@@ -1,42 +1,24 @@
-import type { Metadata } from "next";
-import { GeistSans } from "geist/font/sans";
-import { GeistMono } from "geist/font/mono";
-import "./globals.css";
+import type React from "react"
+import "./globals.css"
+import type { Metadata } from "next"
+import { Inter } from "next/font/google"
+
+const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Todo PWA",
-  description: "A Todo List Progressive Web App built with Next.js",
-  manifest: "/manifest.json",
-  icons: {
-    apple: [
-      { url: "/icons/apple-icon-180.png", sizes: "180x180", type: "image/png" },
-    ],
-  },
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "default",
-    title: "Todo PWA",
-  },
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-  },
-  themeColor: "#4f46e5",
-};
+  title: "Do it! - Todo App",
+  description: "A simple and classy todo app",
+}
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: React.ReactNode
+}) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${GeistSans.variable} ${GeistMono.variable} bg-background text-foreground`}
-      >
-        {children}
-      </body>
+    <html lang="en">
+      <body className={inter.className}>{children}</body>
     </html>
-  );
+  )
 }
+
