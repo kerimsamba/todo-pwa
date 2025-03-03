@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import type { Task } from "@/types/task"
+import type { Task } from "@/types/tasks"
 import { updateTask, deleteTask } from "@/lib/tasks"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
