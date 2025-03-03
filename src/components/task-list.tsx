@@ -1,113 +1,85 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import type { Task } from "@/types/tasks"
-import { updateTask, deleteTask } from "@/lib/tasks"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Pencil, Trash2, X, Check } from "lucide-react"
+import { useState, useEffect } from "react"
+import type { Task } from "@/types/task"
+import { getTasks, deleteTask } from "@/lib/tasks"
 
-interface TaskListProps {
-  tasks: Task[]
-  onTasksChange: () => void
-}
+export default function TaskList() {
+  const [tasks, setTasks] = useState<Task[]>([])
+  const [loading, setLoading] = useState(true)
 
-export function TaskList({ tasks, onTasksChange }: TaskListProps) {
-  const [editingId, setEditingId] = useState<string | null>(null)
-  const [editValue, setEditValue] = useState("")
+  useEffect(() => {
+    // Load tasks from localStorage
+    const storedTasks = getTasks()
+    setTasks(storedTasks)
+    setLoading(false)
+  }, [])
 
-  const handleToggleComplete = (task: Task) => {
-    updateTask(task.id, { completed: !task.completed })
-    onTasksChange()
+  const handleDelete = (id: string) => {
+    deleteTask(id)
+    setTasks(tasks.filter(task => task.id !== id))
   }
 
-  const handleEdit = (task: Task) => {
-    setEditingId(task.id)
-    setEditValue(task.title)
-  }
-
-  const handleSaveEdit = (taskId: string) => {
-    if (editValue.trim()) {
-      updateTask(taskId, { title: editValue.trim() })
-      onTasksChange()
+  const formatDueDate = (dateString: string | null) => {
+    if (!dateString) return 'No due date'
+    
+    const date = new Date(dateString)
+    const today = new Date()
+    const tomorrow = new Date()
+    tomorrow.setDate(today.getDate() + 1)
+    
+    if (date.toDateString() === today.toDateString()) {
+      return 'Today'
+    } else if (date.toDateString() === tomorrow.toDateString()) {
+      return 'Tomorrow'
+    } else {
+      return date.toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric',
+        year: today.getFullYear() !== date.getFullYear() ? 'numeric' : undefined
+      })
     }
-    setEditingId(null)
   }
 
-  const handleDelete = (taskId: string) => {
-    deleteTask(taskId)
-    onTasksChange()
+  if (loading) {
+    return <div className="animate-pulse flex justify-center">Loading...</div>
   }
 
   if (tasks.length === 0) {
-    return <div className="text-center text-gray-400 py-8">No tasks yet. Click the + button to add one!</div>
+    return (
+      <div className="text-center mt-12">
+        <p className="text-gray-400 mb-6">No tasks available</p>
+      </div>
+    )
   }
 
   return (
-    <ul className="space-y-3">
-      {tasks.map((task) => (
-        <li
-          key={task.id}
-          className="flex items-center gap-3 p-4 bg-gray-800 rounded-lg group hover:bg-gray-750 transition-colors"
+    <ul className="space-y-4">
+      {tasks.map(task => (
+        <li 
+          key={task.id} 
+          className="bg-gray-800 rounded-lg p-4 transition-all hover:bg-gray-700"
         >
-          <Checkbox
-            checked={task.completed}
-            onCheckedChange={() => handleToggleComplete(task)}
-            className="data-[state=checked]:bg-green-600"
-          />
-
-          {editingId === task.id ? (
-            <div className="flex-1 flex items-center gap-2">
-              <Input
-                value={editValue}
-                onChange={(e) => setEditValue(e.target.value)}
-                className="flex-1 bg-gray-700 border-gray-600"
-                autoFocus
-              />
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={() => handleSaveEdit(task.id)}
-                className="text-green-500 hover:text-green-400"
-              >
-                <Check size={16} />
-              </Button>
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={() => setEditingId(null)}
-                className="text-red-500 hover:text-red-400"
-              >
-                <X size={16} />
-              </Button>
+          <div className="flex justify-between items-start">
+            <div>
+              <p>{task.text}</p>
+              {task.dueDate && (
+                <p className="text-gray-400 text-sm mt-2">
+                  {formatDueDate(task.dueDate)}
+                </p>
+              )}
             </div>
-          ) : (
-            <>
-              <span className={`flex-1 ${task.completed ? "line-through text-gray-400" : ""}`}>{task.title}</span>
-              <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={() => handleEdit(task)}
-                  className="text-blue-500 hover:text-blue-400"
-                >
-                  <Pencil size={16} />
-                </Button>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={() => handleDelete(task.id)}
-                  className="text-red-500 hover:text-red-400"
-                >
-                  <Trash2 size={16} />
-                </Button>
-              </div>
-            </>
-          )}
+            <button 
+              onClick={() => handleDelete(task.id)}
+              className="text-gray-400 hover:text-red-500"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+              </svg>
+            </button>
+          </div>
         </li>
       ))}
     </ul>
   )
 }
-
