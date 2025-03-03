@@ -2,12 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-
-interface Task {
-  id: string;
-  text: string;
-  dueDate: string | null;
-}
+import { addTask } from '@/lib/tasks';
 
 export default function NewTask() {
   const [taskText, setTaskText] = useState('');
@@ -18,27 +13,8 @@ export default function NewTask() {
     
     if (!taskText.trim()) return;
     
-    // Create new task
-    const newTask: Task = {
-      id: Date.now().toString(),
-      text: taskText.trim(),
-      dueDate: null,
-    };
-    
-    // Save to localStorage
-    const storedTasks = localStorage.getItem('tasks');
-    let tasks: Task[] = [];
-    
-    if (storedTasks) {
-      try {
-        tasks = JSON.parse(storedTasks);
-      } catch (e) {
-        console.error('Error parsing stored tasks:', e);
-      }
-    }
-    
-    tasks.push(newTask);
-    localStorage.setItem('tasks', JSON.stringify(tasks));
+    // Add the new task
+    addTask(taskText);
     
     // Go back to home
     router.push('/');
